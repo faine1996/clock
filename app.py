@@ -30,7 +30,6 @@ HTML = """
       position: relative;
       box-shadow: 0 6px 18px rgba(0,0,0,.15);
     }
-    /* tick marks */
     .tick {
       position: absolute;
       left: 50%;
@@ -50,14 +49,12 @@ HTML = """
       background: #222;
       border-radius: 2px;
     }
-    /* hour ticks thicker */
     .tick.hr:after {
       height: 18px;
       width: 5px;
       left: -1.5px;
       background: #000;
     }
-    /* hands */
     .hand {
       position: absolute;
       left: 50%;
@@ -65,6 +62,7 @@ HTML = """
       transform-origin: bottom center;
       transform: translate(-50%, -100%) rotate(0deg);
       border-radius: 6px;
+      z-index: 1; /* hands stay below date */
     }
     .hand.hour {
       width: 8px;
@@ -81,7 +79,6 @@ HTML = """
       height: 130px;
       background: #e11;
     }
-    /* center cap */
     .cap {
       position: absolute;
       left: 50%;
@@ -93,7 +90,6 @@ HTML = """
       transform: translate(-50%, -50%);
       z-index: 3;
     }
-    /* date in the middle */
     .date {
       position: absolute;
       left: 50%;
@@ -103,9 +99,13 @@ HTML = """
       color: #111;
       text-align: center;
       line-height: 1.2;
-      width: 120px;
-      z-index: 2;
+      width: 140px;
+      z-index: 5; /* above hands */
       pointer-events: none;
+      background: rgba(255,255,255,.9);
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
     }
     .label {
       margin-top: 4px;
@@ -115,17 +115,14 @@ HTML = """
   </style>
 </head>
 <body>
-  <div class="clock-wrap" id="clock">
-    <!-- 12 major ticks and 48 minor ticks -->
-  </div>
+  <div class="clock-wrap" id="clock"></div>
 
   <script>
     (function () {
       const tz = "Asia/Jerusalem";
-
       const root = document.getElementById("clock");
 
-      // build ticks
+      // ticks
       for (let i = 0; i < 60; i++) {
         const t = document.createElement("div");
         t.className = "tick" + (i % 5 === 0 ? " hr" : "");
@@ -222,8 +219,7 @@ HTML = """
 
 @app.route("/")
 def index():
-  # Pure client-side TZ handling; server stays simple.
-  return render_template_string(HTML)
+    return render_template_string(HTML)
 
 
 if __name__ == "__main__":
